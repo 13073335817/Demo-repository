@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.itheima.Demon01" id="demon01"></bean>
+
+<!--    jobDetail,指定具体方法执行的工作细节-->
+    <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" id="jobDetail">
+        <property name="targetObject" ref="demon01"></property>
+        <property name="targetMethod" value="run"></property>
+    </bean>
+
+<!--    触发器-->
+    <bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" id="cronTrigger">
+        <!-- 注入JobDetail -->
+        <property name="jobDetail" ref="jobDetail"></property>
+        <!-- 指定触发的时间，基于Cron表达式 -->
+        <property name="cronExpression">
+            <value>0/10 * * * * ?</value>
+        </property>
+    </bean>
+
+<!--    调度工厂-->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+<!--        注入多个触发器-->
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger"></ref>
+            </list>
+        </property>
+    </bean>
+</beans>
